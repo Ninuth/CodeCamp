@@ -1,0 +1,9 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/WebSockets/.vs
+/WebSockets/Client/bin/Debug/net8.0
+/WebSockets/Client/obj
+/WebSockets/Server/bin/Debug/net8.0
+/WebSockets/Server/obj
