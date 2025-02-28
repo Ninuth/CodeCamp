@@ -7,3 +7,7 @@
 /WebSockets/Client/obj
 /WebSockets/Server/bin/Debug/net8.0
 /WebSockets/Server/obj
+/WindowsService/.vs/WindowsService
+/WindowsService/WorkerService1/bin/Debug/net8.0
+/WindowsService/WorkerService1/Logs
+/WindowsService/WorkerService1/obj
