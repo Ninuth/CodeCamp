@@ -11,3 +11,6 @@
 /WindowsService/WorkerService1/bin/Debug/net8.0
 /WindowsService/WorkerService1/Logs
 /WindowsService/WorkerService1/obj
+/WindowsService/WorkerService1/bin/Release/net8.0
+/WindowsService/Installer/Release
+/WindowsService/WorkerService1/Properties/PublishProfiles

@@ -1,11 +1,21 @@
+using CliWrap;
+
 using Serilog;
 
 namespace WorkerService1
 {
     public class Program
     {
+        private static string myServiceName = "Test WorkerService1";
+
         public static void Main(string[] args)
         {
+            if (args?.Length == 1)
+            {
+                CreateInstaller(args).Wait();
+                return;
+            }
+
             var builder = Host.CreateApplicationBuilder(args);
 
             var appSettingsConfig = new ConfigurationBuilder()
@@ -14,18 +24,11 @@ namespace WorkerService1
 
             //https://github.com/serilog/serilog-settings-configuration
 
-            //Serilog.ILogger logger = new LoggerConfiguration()
-            //   .ReadFrom.Configuration(appSettingsConfig)
-            //   .CreateLogger();
-
             Serilog.ILogger logger = new LoggerConfiguration()
                .ReadFrom.Configuration(appSettingsConfig)
                .CreateLogger();
 
             var config = appSettingsConfig.GetSection("Config").Get<Config>();
-
-            //var config = new Config();
-            //config.Bind(config);
 
             builder.Services.AddSingleton(logger);
             builder.Services.AddSingleton(config);
@@ -35,6 +38,44 @@ namespace WorkerService1
 
             var host = builder.Build();
             host.Run();
+        }
+
+        private static async Task CreateInstaller(string[] args)
+        {
+            try
+            {
+                string executablePath =
+                    Path.Combine(AppContext.BaseDirectory, "WorkerService1.exe");
+
+                if (args[0] is "/Install")
+                {
+                    await Cli.Wrap("sc")
+                        .WithArguments(new[] { "create", myServiceName, $"binPath={executablePath}", "start=auto", "displayname=Test WorkerService1" })
+                        .ExecuteAsync();
+                    await Cli.Wrap("sc")
+                       .WithArguments(new[] { "description", myServiceName, "Test WorkerService1" })
+                       .ExecuteAsync();
+                }
+                else if (args[0] is "/Uninstall")
+                {
+                    try
+                    {
+                        await Cli.Wrap("sc")
+                       .WithArguments(new[] { "stop", myServiceName })
+                       .ExecuteAsync();
+                    }
+                    catch (Exception)
+                    {
+                    }
+                    await Cli.Wrap("sc")
+                        .WithArguments(new[] { "delete", myServiceName })
+                        .ExecuteAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
         }
     }
 }
